@@ -1,63 +1,33 @@
-package main
+http.HandleFunc("/chat", func(w http.ResponseWriter, r *http.Request) {
 
-import (
-	"encoding/json"
-	"fmt"
-	"log"
-	"net/http"
-	"os"
-)
+    // CORS Headers
+    w.Header().Set("Access-Control-Allow-Origin", "*")
+    w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+    w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
 
-type Request struct {
-	Message string `json:"message"`
-}
+    // IMPORTANTE: El navegador necesita un 200 OK en el método OPTIONS
+    if r.Method == http.MethodOptions {
+        w.WriteHeader(http.StatusOK) // <--- AÑADE ESTA LÍNEA
+        return
+    }
 
-type Response struct {
-	Reply string `json:"reply"`
-}
+    if r.Method != http.MethodPost {
+        http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+        return
+    }
 
-func main() {
+    var req Request
+    err := json.NewDecoder(r.Body).Decode(&req)
+    if err != nil {
+        http.Error(w, "Error leyendo JSON", http.StatusBadRequest)
+        return
+    }
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Servidor OK - Nica-creator Chat Bot")
-	})
+    // Tu lógica de respuesta
+    res := Response{
+        Reply: "Nica Creator dice: " + req.Message,
+    }
 
-	http.HandleFunc("/chat", func(w http.ResponseWriter, r *http.Request) {
-
-		// CORS
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
-
-		if r.Method == http.MethodOptions {
-			return
-		}
-
-		if r.Method != http.MethodPost {
-			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-			return
-		}
-
-		var req Request
-
-		err := json.NewDecoder(r.Body).Decode(&req)
-		if err != nil {
-			http.Error(w, "Error leyendo JSON", http.StatusBadRequest)
-			return
-		}
-
-		res := Response{
-			Reply: "Recibido: " + req.Message,
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(res)
-	})
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
-	log.Fatal(http.ListenAndServe(":"+port, nil))
-}
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(res)
+})
