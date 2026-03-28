@@ -7,175 +7,154 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <style>
-/* ===== ESTILO GENERAL ===== */
-body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: #020617;
-    color: white;
-}
-
-header {
-    background: #0f172a;
-    padding: 12px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #1e293b;
-}
-
-header div { font-weight: bold; color: #3b82f6; }
-nav a { color: #94a3b8; text-decoration: none; font-size: 13px; margin-left: 10px; }
-
-/* ===== CHAT WIDGET ===== */
-#chat-widget {
-    position: fixed;
-    bottom: 15px;
-    right: 15px;
-    z-index: 9999;
-}
-
-/* BOTÓN VERDE */
-#chat-btn {
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    background: #22c55e; /* VERDE */
-    color: white;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* VENTANA DE CHAT MÓVIL OPTIMIZADA */
-#chat-window {
-    display: none;
-    width: 320px;
-    height: 450px;
-    background: #1e293b;
-    position: absolute;
-    bottom: 65px;
-    right: 0;
-    border-radius: 12px;
-    overflow: hidden;
-    flex-direction: column;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-    border: 1px solid #334155;
-}
-
-.chat-header {
-    background: #0f172a;
-    color: white;
-    padding: 12px;
-    font-weight: bold;
-    text-align: center;
-    font-size: 13px;
-    border-bottom: 1px solid #334155;
-}
-
-/* CUERPO CON SCROLL FIJO */
-#chat-body {
-    flex: 1;
-    padding: 12px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    background: #0f172a;
-}
-
-.msg {
-    padding: 8px 12px;
-    border-radius: 12px;
-    max-width: 85%;
-    font-size: 13px;
-    word-wrap: break-word;
-}
-
-.user {
-    background: #2563eb;
-    color: white;
-    align-self: flex-end;
-    border-bottom-right-radius: 2px;
-}
-
-.bot {
-    background: #334155;
-    color: #cbd5e1;
-    align-self: flex-start;
-    border-bottom-left-radius: 2px;
-}
-
-/* INPUT PEQUEÑO Y COMPACTO */
-.chat-input {
-    display: flex;
-    padding: 10px;
-    background: #1e293b;
-    gap: 6px;
-    align-items: center;
-}
-
-.chat-input input {
-    flex: 1;
-    padding: 8px 12px;
-    border-radius: 18px;
-    border: 1px solid #475569;
-    outline: none;
-    background: #0f172a;
-    color: white;
-    font-size: 14px; /* Evita zoom automático en iPhone */
-}
-
-.chat-input button {
-    background: #22c55e;
-    border: none;
-    color: white;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-/* AJUSTES PARA CELULARES PEQUEÑOS */
-@media (max-width: 480px) {
-    #chat-window {
-        width: 88vw;
-        height: 60vh;
-        right: -5px;
+    /* ===== ESTILO GENERAL ===== */
+    body {
+        margin: 0;
+        font-family: 'Segoe UI', Roboto, sans-serif;
+        background: #020617;
+        color: white;
     }
-}
+
+    /* ===== CHAT WIDGET ===== */
+    #chat-widget {
+        position: fixed;
+        bottom: 15px;
+        right: 15px;
+        z-index: 9999;
+    }
+
+    /* BOTÓN VERDE */
+    #chat-btn {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        background: #22c55e; /* VERDE */
+        color: white;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* VENTANA AZUL COMPACTA */
+    #chat-window {
+        display: none;
+        width: 320px;
+        height: 420px;
+        background: #1e293b; /* Fondo Azul */
+        position: absolute;
+        bottom: 65px;
+        right: 0;
+        border-radius: 12px;
+        overflow: hidden;
+        flex-direction: column;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+        border: 1px solid #334155;
+    }
+
+    .chat-header {
+        background: #0f172a;
+        padding: 12px;
+        font-weight: bold;
+        text-align: center;
+        font-size: 13px;
+        border-bottom: 1px solid #334155;
+    }
+
+    /* CUERPO - SCROLL CORREGIDO */
+    #chat-body {
+        flex: 1;
+        padding: 12px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        background: #0f172a; /* Fondo más oscuro para contraste */
+    }
+
+    .msg {
+        padding: 8px 12px;
+        border-radius: 12px;
+        max-width: 85%;
+        font-size: 13px;
+        word-wrap: break-word;
+        line-height: 1.4;
+    }
+
+    .user {
+        background: #2563eb;
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
+    }
+
+    .bot {
+        background: #334155;
+        color: #cbd5e1;
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+    }
+
+    /* INPUT PEQUEÑO (COMO TU CAJA) */
+    .chat-input {
+        display: flex;
+        padding: 8px;
+        background: #1e293b;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .chat-input input {
+        flex: 1;
+        padding: 8px 12px;
+        border-radius: 20px;
+        border: 1px solid #475569;
+        outline: none;
+        background: #0f172a;
+        color: white;
+        font-size: 14px; /* Evita zoom molesto en móvil */
+    }
+
+    .chat-input button {
+        background: #22c55e;
+        border: none;
+        color: white;
+        border-radius: 50%;
+        width: 34px;
+        height: 34px;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+
+    @media (max-width: 480px) {
+        #chat-window {
+            width: 85vw;
+            height: 55vh;
+            right: -5px;
+        }
+    }
 </style>
 </head>
 <body>
 
-<header>
-    <div>NICA CREATOR</div>
-    <nav>
-        <a href="#">Inicio</a>
-        <a href="#">Proyectos</a>
-    </nav>
+<header style="background: #0f172a; padding: 15px; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between;">
+    <div style="font-weight: bold; color: #3b82f6;">NICA CREATOR</div>
+    <div style="font-size: 12px; color: #94a3b8;">CONTANOR ERP</div>
 </header>
-
-<section style="text-align: center; padding: 50px 20px;">
-    <h1>CONTANOR</h1>
-    <p>Sistema Contable & ERP</p>
-</section>
 
 <div id="chat-widget">
     <button id="chat-btn" onclick="toggleChat()">💬</button>
 
     <div id="chat-window">
-        <div class="chat-header">🤖 ASISTENTE NICA CREATOR</div>
+        <div class="chat-header">🤖 ASISTENTE NICA</div>
         <div id="chat-body">
-            <div class="msg bot">Hola Rachel, ¿cómo va el desarrollo de CONTANOR?</div>
+            <div class="msg bot">Hola Rachel, ¿probamos la conexión con Render?</div>
         </div>
         <div class="chat-input">
-            <input type="text" id="user-input" placeholder="Escribe aquí..." onkeypress="checkEnter(event)">
+            <input type="text" id="user-input" placeholder="Escribe..." onkeypress="checkEnter(event)">
             <button onclick="send()">➤</button>
         </div>
     </div>
@@ -188,60 +167,66 @@ function toggleChat() {
     const chat = document.getElementById("chat-window");
     const isVisible = chat.style.display === "flex";
     chat.style.display = isVisible ? "none" : "flex";
-    if (!isVisible) scrollToBottom();
+    if (!isVisible) {
+        setTimeout(scrollToBottom, 50);
+        document.getElementById("user-input").focus();
+    }
 }
 
 function scrollToBottom() {
     const body = document.getElementById("chat-body");
-    body.scrollTop = body.scrollHeight;
+    body.scrollTo({ top: body.scrollHeight, behavior: 'smooth' });
 }
 
 function addMessage(type, text) {
     const body = document.getElementById("chat-body");
     const div = document.createElement("div");
     div.className = "msg " + type;
-    div.innerText = text; // Usamos innerText por seguridad
+    div.innerText = text;
     body.appendChild(div);
-    scrollToBottom(); // Asegura que siempre veamos el último
+    scrollToBottom();
 }
 
 function send() {
     const input = document.getElementById("user-input");
     const text = input.value.trim();
-
     if (!text) return;
 
     addMessage("user", text);
     input.value = "";
     
-    // Feedback visual de carga
-    const loadingDiv = document.createElement("div");
-    loadingDiv.className = "msg bot";
-    loadingDiv.innerText = "...";
-    loadingDiv.id = "loading-msg";
-    document.getElementById("chat-body").appendChild(loadingDiv);
+    // Indicador de "Escribiendo..."
+    const loadingId = "load-" + Date.now();
+    const body = document.getElementById("chat-body");
+    const loadDiv = document.createElement("div");
+    loadDiv.className = "msg bot";
+    loadDiv.innerText = "...";
+    loadDiv.id = loadingId;
+    body.appendChild(loadDiv);
     scrollToBottom();
 
     $.ajax({
         url: API_URL,
         type: "POST",
+        dataType: "json",
+        crossDomain: true, // Forzar modo cross-origin
         contentType: "application/json",
         data: JSON.stringify({ message: text }),
         success: function(res) {
-            $("#loading-msg").remove();
-            addMessage("bot", res.reply || res.message || "Respuesta recibida");
+            $("#" + loadingId).remove();
+            // Soporta varios formatos de respuesta (reply, message, o response)
+            const botReply = res.reply || res.message || res.response || "No recibí texto";
+            addMessage("bot", botReply);
         },
-        error: function(xhr) {
-            $("#loading-msg").remove();
-            addMessage("bot", "Error: No se pudo conectar con Render. (Estado: " + xhr.status + ")");
-            console.error("Detalle del error:", xhr);
+        error: function(xhr, status, error) {
+            $("#" + loadingId).remove();
+            addMessage("bot", "Error de conexión. Verifica si Render está encendido.");
+            console.log("Error Detalle:", status, error);
         }
     });
 }
 
-function checkEnter(e) {
-    if (e.key === "Enter") send();
-}
+function checkEnter(e) { if (e.key === "Enter") send(); }
 </script>
 
 </body>
