@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NICA-CREATOR | Expertos en Odoo y Chatbots</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts (Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --ed-blue: #0076f6;
+            --ed-dark: #0d1117;
+            --ed-black: #010409;
+            --whatsapp-green: #25d366;
+            --text-light: #f0f6fc;
+            --text-gray: #8b949e;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--ed-black);
+            color: var(--text-light);
+            scroll-behavior: smooth;
+        }
+
+        /* Navbar estilo Dark Mode */
+        .navbar {
+            background-color: rgba(13, 17, 23, 0.95);
+            border-bottom: 1px solid #30363d;
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            color: var(--ed-blue) !important;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: var(--text-gray) !important;
+            font-weight: 500;
+            margin: 0 15px;
+            transition: 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--ed-blue) !important;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 120px 0;
+            background: radial-gradient(circle at top right, #004494 0%, var(--ed-black) 50%);
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 25px;
+        }
+
+        .hero p {
+            color: var(--text-gray);
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 35px;
+        }
+
+        /* Tarjetas de Servicios (Escuelas) */
+        .section-title {
+            font-weight: 800;
+            font-size: 2.2rem;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        .service-card {
+            background: var(--ed-dark);
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 30px;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            border-color: var(--ed-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 118, 246, 0.2);
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--ed-blue);
+            margin-bottom: 20px;
+        }
+
+        /* Chat Widget con estilo WhatsApp */
+        #chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 2000;
+        }
+
+        #whatsapp-btn {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: var(--whatsapp-green);
+            color: white;
+            border: none;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            transition: 0.3s;
+        }
+
+        #whatsapp-btn:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        #chat-window {
+            width: 380px;
+            height: 550px;
+            background: var(--ed-dark);
+            border: 1px solid #30363d;
+            border-radius: 20px;
+            display: none;
+            flex-direction: column;
+            position: absolute;
+            bottom: 85px;
+            right: 0;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: var(--ed-blue);
+            padding: 18px;
+            color: white;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #0d1117;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .msg {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .bot-msg {
+            background: #30363d;
+            color: white;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .user-msg {
+            background: var(--ed-blue);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid #30363d;
+            background: #161b22;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input-area input {
+            flex: 1;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            outline: none;
+        }
+
+        .chat-input-area button {
+            background: var(--ed-blue);
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        footer {
+            border-top: 1px solid #30363d;
+            padding: 60px 0;
+            margin-top: 100px;
+            background: var(--ed-black);
+            color: var(--text-gray);
+        }
+
+        /* Botón de acción principal */
+        .btn-ed {
+            background: var(--ed-blue);
+            color: white;
+            font-weight: 700;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-ed:hover {
+            background: #005bbd;
+            color: white;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="#">NICA-CREATOR</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="filter: invert(1);">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#odoo">Odoo ERP</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section id="inicio" class="hero">
+        <div class="container">
+            <h1>Creamos tecnología que <br><span style="color: var(--ed-blue);">escala tu negocio</span></h1>
+            <p>En NICA-CREATOR somos expertos en automatización, desarrollo web y gestión empresarial inteligente.</p>
+            <a href="#servicios" class="btn-ed">Ver nuestros servicios</a>
+        </div>
+    </section>
+
+    <!-- Servicios -->
+    <section id="servicios" class="container py-5">
+        <h2 class="section-title">Nuestras Especialidades</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-robot"></i></div>
+                    <h3>Chatbot AI</h3>
+                    <p class="text-gray">Agentes de ventas inteligentes 24/7 conectados a tu base de datos y WhatsApp.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fas fa-laptop-code"></i></div>
+                    <h3>Páginas Web</h3>
+                    <p class="text-gray">Desarrollo Frontend y Backend de alto rendimiento con las últimas tecnologías.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="service-card" id="odoo">
+                    <div class="service-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>ERP Odoo</h3>
+                    <p class="text-gray">Implementación y personalización de Odoo para centralizar toda tu empresa.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <p>NICA-CREATOR &copy; 2026 | De Nicaragua para el mundo</p>
+            <div class="fs-4">
+                <i class="fab fa-github mx-2"></i>
+                <i class="fab fa-linkedin mx-2"></i>
+                <i class="fab fa-twitter mx-2"></i>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Widget -->
+    <div id="chat-widget">
+        <div id="chat-window">
+            <div class="chat-header">
+                <div>
+                    <i class="fas fa-user-tie me-2"></i>
+                    <span>Soporte NICA-CREATOR</span>
+                </div>
+                <button onclick="toggleChat()" style="background:none; border:none; color:white;">&times;</button>
+            </div>
+            <div class="chat-body" id="chat-body">
+                <!-- Mensajes dinámicos -->
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="user-input" placeholder="Pregúntame algo..." onkeypress="checkEnter(event)">
+                <button onclick="handleSend()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <button id="whatsapp-btn" onclick="toggleChat()">
+            <i class="fab fa-whatsapp"></i>
+        </button>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const API_URL = "https://tu-backend-en-render.onrender.com/chat";
+
+        function toggleChat() {
+            const win = document.getElementById('chat-window');
+            const isOpen = win.style.display === 'flex';
+            win.style.display = isOpen ? 'none' : 'flex';
+
+            if (!isOpen && document.getElementById('chat-body').children.length === 0) {
+                setTimeout(() => {
+                    addMessage('bot', "¡Hola! 👋 Soy el asistente virtual de **NICA-CREATOR**.\n\n¿Buscas un **Chatbot**, una **Página Web** o ayuda con **Odoo ERP**?");
+                }, 400);
+            }
+        }
+
+        function addMessage(sender, text) {
+            const body = document.getElementById('chat-body');
+            const div = document.createElement('div');
+            div.className = `msg ${sender === 'bot' ? 'bot-msg' : 'user-msg'}`;
+            // Convertimos saltos de línea a <br>
+            div.innerHTML = text.replace(/\n/g, '<br>');
+            body.appendChild(div);
+            body.scrollTop = body.scrollHeight;
+        }
+
+        function handleSend() {
+            const input = document.getElementById('user-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            addMessage('user', text);
+            input.value = '';
+
+            // AJAX hacia Backend GO en Render
+            $.ajax({
+                url: API_URL,
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ message: text }),
+                success: function(res) {
+                    addMessage('bot', res.reply || "He recibido tu mensaje.");
+                },
+                error: function() {
+                    addMessage('bot', "Estoy conectando con mi cerebro en la nube (Render)... Intenta de nuevo en 5 segundos.");
+                }
+            });
+        }
+
+        function checkEnter(e) {
+            if (e.key === 'Enter') handleSend();
+        }
+
+        // Navegación Activa
+        $(window).scroll(function() {
+            let position = $(this).scrollTop();
+            $('.nav-link').each(function() {
+                let target = $(this.hash);
+                if (target.length && position >= (target.offset().top - 150)) {
+                    $('.nav-link').removeClass('active');
+                    $(this).addClass('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
