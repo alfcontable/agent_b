@@ -1,47 +1,46 @@
 package main
 
 import (
-	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 )
 
-type Request struct {
-	Message string `json:"message"`
-}
+func main() {
 
-type Response struct {
-	Reply string `json:"reply"`
-}
+	// Ruta principal (evita el error 404)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprintln(w, "Servidor OK - Nica-creator Chat Bot")
+	})
 
-func chatHandler(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
+	// Endpoint de prueba para chat
+	http.HandleFunc("/chat", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+			return
+		}
 
-	if r.Method != "POST" {
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		return
+		// Aquí puedes leer el mensaje del cliente
+		message := r.FormValue("message")
+
+		// Respuesta simple (luego aquí conectas IA o lógica)
+		response := "Recibido: " + message
+
+		fmt.Fprintln(w, response)
+	})
+
+	// Obtener el puerto que Render asigna
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // fallback local
 	}
 
-	var req Request
-	json.NewDecoder(r.Body).Decode(&req)
+	fmt.Println("Servidor corriendo en puerto:", port)
 
-	// RESPUESTA (puedes cambiar esto por IA después)
-	reply := "Hola 👋 soy el bot de NICA-CREATOR. Dijiste: " + req.Message
-
-	res := Response{Reply: reply}
-
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(res)
-}
-
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type")
-}
-
-func main() {
-	http.HandleFunc("/chat", chatHandler)
-
-	log.Println("Servidor corriendo en puerto 8080")
-	http.ListenAndServe(":8080", nil)
+	// Iniciar servidor
+	err := http.ListenAndServe(":"+port, nil)
+	if err != nil {
+		log.Fatal("Error al iniciar servidor:", err)
+	}
 }
