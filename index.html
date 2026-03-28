@@ -9,30 +9,33 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <style>
+/* ===== FONDO GENERAL ===== */
 body {
     margin: 0;
     font-family: Arial;
+    background: #020617;
+    color: white;
 }
 
-/* ===== MENÚ ===== */
+/* ===== MENÚ (EJEMPLO) ===== */
 header {
-    background: #111;
-    color: white;
+    background: #0f172a;
     padding: 15px;
     display: flex;
     justify-content: space-between;
+    color: white;
 }
 
 nav a {
-    color: white;
+    color: #93c5fd;
     margin: 0 10px;
     text-decoration: none;
 }
 
-/* ===== SECCIÓN SERVICIOS ===== */
-.hero {
+/* ===== CONTENIDO ===== */
+section {
+    padding: 40px;
     text-align: center;
-    padding: 50px;
 }
 
 /* ===== CHAT ===== */
@@ -45,14 +48,15 @@ nav a {
 
 /* BOTÓN */
 #chat-btn {
-    width: 65px;
-    height: 65px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
-    background: #25d366;
+    background: #2563eb;
     color: white;
     border: none;
-    font-size: 30px;
+    font-size: 26px;
     cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
 
 /* VENTANA */
@@ -60,13 +64,23 @@ nav a {
     display: none;
     width: 360px;
     height: 520px;
-    background: #161b22;
+    background: #0b1220;
     position: absolute;
     bottom: 80px;
     right: 0;
-    border-radius: 15px;
-    flex-direction: column;
+    border-radius: 18px;
     overflow: hidden;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* HEADER CHAT */
+.chat-header {
+    background: #2563eb;
+    color: white;
+    padding: 12px;
+    font-weight: bold;
+    text-align: center;
 }
 
 /* MENSAJES */
@@ -76,48 +90,62 @@ nav a {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    gap: 8px;
 }
 
+/* MENSAJES */
 .msg {
-    margin: 5px 0;
-    padding: 10px;
-    border-radius: 10px;
-    max-width: 80%;
+    padding: 10px 12px;
+    border-radius: 15px;
+    max-width: 75%;
+    font-size: 14px;
 }
 
+/* USUARIO */
 .user {
-    background: #0076f6;
+    background: #3b82f6;
     color: white;
     align-self: flex-end;
+    border-bottom-right-radius: 5px;
 }
 
+/* BOT */
 .bot {
-    background: #30363d;
-    color: white;
+    background: #1e293b;
+    color: #cbd5f5;
     align-self: flex-start;
+    border-bottom-left-radius: 5px;
 }
 
 /* INPUT */
 .chat-input {
     display: flex;
-    border-top: 1px solid #30363d;
+    padding: 8px;
+    background: #020617;
 }
 
 .chat-input input {
     flex: 1;
     padding: 10px;
+    border-radius: 20px;
     border: none;
     outline: none;
+    background: #1e293b;
+    color: white;
 }
 
 .chat-input button {
-    background: #0076f6;
-    color: white;
+    margin-left: 8px;
+    background: #2563eb;
     border: none;
-    padding: 10px;
+    color: white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== MOBILE ===== */
 @media (max-width: 768px) {
     #chat-window {
         width: 95%;
@@ -128,7 +156,7 @@ nav a {
     #chat-btn {
         width: 55px;
         height: 55px;
-        font-size: 24px;
+        font-size: 22px;
     }
 }
 </style>
@@ -148,33 +176,39 @@ nav a {
 </header>
 
 <!-- ===== CONTENIDO ===== -->
-<section class="hero">
-    <h1>Bienvenido a mi sistema</h1>
-    <p>Servicios de desarrollo y chat bot</p>
+<section>
+    <h1>Bienvenido</h1>
+    <p>Tu sistema con chat integrado</p>
 </section>
 
-<section class="hero">
+<section>
     <h2>Servicios</h2>
-    <p>✔ Desarrollo Web</p>
-    <p>✔ Chatbots</p>
     <p>✔ Sistemas en Go</p>
+    <p>✔ Chatbots</p>
+    <p>✔ Desarrollo Web</p>
 </section>
 
-<!-- ===== CHAT FLOAT ===== -->
+<!-- ===== CHAT ===== -->
 <div id="chat-widget">
     <button id="chat-btn" onclick="toggleChat()">💬</button>
 
     <div id="chat-window">
+        
+        <div class="chat-header">
+            🤖 NICA CHAT
+        </div>
+
         <div id="chat-body"></div>
 
         <div class="chat-input">
             <input type="text" id="user-input" placeholder="Escribe..." onkeypress="checkEnter(event)">
             <button onclick="send()">➤</button>
         </div>
+
     </div>
 </div>
 
-<!-- ===== JS ===== -->
+<!-- ===== SCRIPT ===== -->
 <script>
 
 const API_URL = "https://agent-b-26n4.onrender.com/chat";
