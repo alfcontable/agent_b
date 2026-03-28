@@ -4,43 +4,67 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>NICA-CREATOR</title>
+<title>NICA CREATOR</title>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <style>
 body {
-    font-family: Arial;
     margin: 0;
-    background: #0d1117;
-    color: white;
+    font-family: Arial;
 }
 
-/* BOTÓN CHAT */
-#chat-btn {
+/* ===== MENÚ ===== */
+header {
+    background: #111;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+nav a {
+    color: white;
+    margin: 0 10px;
+    text-decoration: none;
+}
+
+/* ===== SECCIÓN SERVICIOS ===== */
+.hero {
+    text-align: center;
+    padding: 50px;
+}
+
+/* ===== CHAT ===== */
+#chat-widget {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background: #25d366;
-    color: white;
-    border: none;
+    z-index: 9999;
+}
+
+/* BOTÓN */
+#chat-btn {
     width: 65px;
     height: 65px;
     border-radius: 50%;
+    background: #25d366;
+    color: white;
+    border: none;
     font-size: 30px;
     cursor: pointer;
 }
 
-/* VENTANA CHAT */
+/* VENTANA */
 #chat-window {
-    position: fixed;
-    bottom: 90px;
-    right: 20px;
-    width: 380px;
-    height: 550px;
-    background: #161b22;
-    border-radius: 15px;
     display: none;
+    width: 360px;
+    height: 520px;
+    background: #161b22;
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    border-radius: 15px;
     flex-direction: column;
     overflow: hidden;
 }
@@ -55,60 +79,56 @@ body {
 }
 
 .msg {
-    padding: 10px;
-    border-radius: 12px;
     margin: 5px 0;
+    padding: 10px;
+    border-radius: 10px;
     max-width: 80%;
-}
-
-.bot {
-    background: #30363d;
-    align-self: flex-start;
 }
 
 .user {
     background: #0076f6;
+    color: white;
     align-self: flex-end;
 }
 
+.bot {
+    background: #30363d;
+    color: white;
+    align-self: flex-start;
+}
+
 /* INPUT */
-#chat-input {
+.chat-input {
     display: flex;
     border-top: 1px solid #30363d;
 }
 
-#chat-input input {
+.chat-input input {
     flex: 1;
     padding: 10px;
     border: none;
     outline: none;
 }
 
-#chat-input button {
+.chat-input button {
     background: #0076f6;
-    border: none;
     color: white;
+    border: none;
     padding: 10px;
 }
 
-/* 📱 RESPONSIVE */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-
     #chat-window {
         width: 95%;
         height: 70vh;
         right: 2.5%;
-        bottom: 80px;
     }
 
     #chat-btn {
         width: 55px;
         height: 55px;
         font-size: 24px;
-    }
-
-    .msg {
-        font-size: 14px;
     }
 }
 </style>
@@ -117,20 +137,46 @@ body {
 
 <body>
 
-<!-- BOTÓN -->
-<button id="chat-btn" onclick="toggleChat()">💬</button>
+<!-- ===== MENÚ ===== -->
+<header>
+    <div>NICA CREATOR</div>
+    <nav>
+        <a href="#">Inicio</a>
+        <a href="#">Servicios</a>
+        <a href="#">Contacto</a>
+    </nav>
+</header>
 
-<!-- CHAT -->
-<div id="chat-window">
-    <div id="chat-body"></div>
+<!-- ===== CONTENIDO ===== -->
+<section class="hero">
+    <h1>Bienvenido a mi sistema</h1>
+    <p>Servicios de desarrollo y chat bot</p>
+</section>
 
-    <div id="chat-input">
-        <input type="text" id="user-input" placeholder="Escribe..." onkeypress="checkEnter(event)">
-        <button onclick="send()">➤</button>
+<section class="hero">
+    <h2>Servicios</h2>
+    <p>✔ Desarrollo Web</p>
+    <p>✔ Chatbots</p>
+    <p>✔ Sistemas en Go</p>
+</section>
+
+<!-- ===== CHAT FLOAT ===== -->
+<div id="chat-widget">
+    <button id="chat-btn" onclick="toggleChat()">💬</button>
+
+    <div id="chat-window">
+        <div id="chat-body"></div>
+
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Escribe..." onkeypress="checkEnter(event)">
+            <button onclick="send()">➤</button>
+        </div>
     </div>
 </div>
 
+<!-- ===== JS ===== -->
 <script>
+
 const API_URL = "https://agent-b-26n4.onrender.com/chat";
 
 function toggleChat() {
@@ -140,10 +186,10 @@ function toggleChat() {
 
 function addMessage(type, text) {
     const body = document.getElementById("chat-body");
-    const div = document.createElement("div");
 
+    const div = document.createElement("div");
     div.className = "msg " + type;
-    div.innerHTML = text.replace(/\n/g, "<br>");
+    div.innerHTML = text;
 
     body.appendChild(div);
     body.scrollTop = body.scrollHeight;
@@ -152,28 +198,24 @@ function addMessage(type, text) {
 function send() {
     const input = document.getElementById("user-input");
     const text = input.value.trim();
+
     if (!text) return;
 
     addMessage("user", text);
     input.value = "";
 
-    // 🔥 AJAX CORREGIDO
     $.ajax({
         url: API_URL,
         type: "POST",
         contentType: "application/json",
         dataType: "json",
-
-        data: JSON.stringify({
-            message: text
-        }),
+        data: JSON.stringify({ message: text }),
 
         success: function(res) {
             addMessage("bot", res.reply);
         },
 
-        error: function(xhr) {
-            console.log(xhr.responseText);
+        error: function() {
             addMessage("bot", "Error conectando con el servidor.");
         }
     });
@@ -182,6 +224,7 @@ function send() {
 function checkEnter(e) {
     if (e.key === "Enter") send();
 }
+
 </script>
 
 </body>
