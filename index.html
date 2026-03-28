@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>NICA CREATOR</title>
 
@@ -12,33 +12,49 @@
 /* ===== FONDO GENERAL ===== */
 body {
     margin: 0;
-    font-family: Arial;
-    background: #020617;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #020617; /* Azul muy oscuro */
     color: white;
+    overflow-x: hidden;
 }
 
-/* ===== MENÚ (EJEMPLO) ===== */
+/* ===== MENÚ MEJORADO ===== */
 header {
     background: #0f172a;
-    padding: 15px;
+    padding: 15px 20px;
     display: flex;
     justify-content: space-between;
-    color: white;
+    align-items: center;
+    border-bottom: 1px solid #1e293b;
+}
+
+header div {
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: #3b82f6;
 }
 
 nav a {
-    color: #93c5fd;
-    margin: 0 10px;
+    color: #94a3b8;
+    margin-left: 15px;
     text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s;
+}
+
+nav a:hover {
+    color: #3b82f6;
 }
 
 /* ===== CONTENIDO ===== */
 section {
-    padding: 40px;
+    padding: 40px 20px;
     text-align: center;
 }
 
-/* ===== CHAT ===== */
+h1 { color: #3b82f6; }
+
+/* ===== CHAT WIDGET ===== */
 #chat-widget {
     position: fixed;
     bottom: 20px;
@@ -46,7 +62,7 @@ section {
     z-index: 9999;
 }
 
-/* BOTÓN */
+/* BOTÓN FLOTANTE */
 #chat-btn {
     width: 60px;
     height: 60px;
@@ -56,86 +72,91 @@ section {
     border: none;
     font-size: 26px;
     cursor: pointer;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* VENTANA */
+/* VENTANA DE CHAT */
 #chat-window {
     display: none;
-    width: 360px;
-    height: 520px;
-    background: #0b1220;
+    width: 350px;
+    height: 500px;
+    background: #1e293b; /* Fondo azul oscuro en lugar de blanco/negro */
     position: absolute;
-    bottom: 80px;
+    bottom: 75px;
     right: 0;
-    border-radius: 18px;
+    border-radius: 15px;
     overflow: hidden;
     flex-direction: column;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    border: 1px solid #334155;
 }
 
-/* HEADER CHAT */
+/* HEADER DEL CHAT */
 .chat-header {
     background: #2563eb;
     color: white;
-    padding: 12px;
+    padding: 15px;
     font-weight: bold;
     text-align: center;
+    font-size: 14px;
 }
 
-/* MENSAJES */
+/* CUERPO DEL CHAT */
 #chat-body {
     flex: 1;
-    padding: 10px;
+    padding: 15px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 10px;
+    background: #0f172a; /* Azul más profundo para los mensajes */
 }
 
 /* MENSAJES */
 .msg {
-    padding: 10px 12px;
+    padding: 10px 14px;
     border-radius: 15px;
-    max-width: 75%;
+    max-width: 80%;
     font-size: 14px;
+    line-height: 1.4;
 }
 
-/* USUARIO */
 .user {
-    background: #3b82f6;
+    background: #2563eb;
     color: white;
     align-self: flex-end;
-    border-bottom-right-radius: 5px;
+    border-bottom-right-radius: 2px;
 }
 
-/* BOT */
 .bot {
-    background: #1e293b;
-    color: #cbd5f5;
+    background: #334155;
+    color: #e2e8f0;
     align-self: flex-start;
-    border-bottom-left-radius: 5px;
+    border-bottom-left-radius: 2px;
 }
 
-/* INPUT */
+/* ÁREA DE INPUT */
 .chat-input {
     display: flex;
-    padding: 8px;
-    background: #020617;
+    padding: 12px;
+    background: #1e293b; /* Azul para el contenedor del input */
+    gap: 8px;
 }
 
 .chat-input input {
     flex: 1;
-    padding: 10px;
-    border-radius: 20px;
-    border: none;
+    padding: 10px 15px;
+    border-radius: 25px;
+    border: 1px solid #334155;
     outline: none;
-    background: #1e293b;
+    background: #0f172a; /* Input azul muy oscuro */
     color: white;
 }
 
 .chat-input button {
-    margin-left: 8px;
     background: #2563eb;
     border: none;
     color: white;
@@ -143,20 +164,30 @@ section {
     width: 40px;
     height: 40px;
     cursor: pointer;
+    flex-shrink: 0;
 }
 
-/* ===== MOBILE ===== */
-@media (max-width: 768px) {
-    #chat-window {
-        width: 95%;
-        height: 70vh;
-        right: 2.5%;
+/* ===== OPTIMIZACIÓN MÓVIL (CELULAR) ===== */
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    nav a {
+        margin: 0 8px;
     }
 
+    #chat-window {
+        width: 85vw; /* Casi todo el ancho del celular */
+        height: 70vh; /* Altura cómoda para teclado móvil */
+        right: -10px; /* Ajuste de posición */
+        bottom: 70px;
+    }
+    
     #chat-btn {
         width: 55px;
         height: 55px;
-        font-size: 22px;
     }
 }
 </style>
@@ -165,7 +196,6 @@ section {
 
 <body>
 
-<!-- ===== MENÚ ===== -->
 <header>
     <div>NICA CREATOR</div>
     <nav>
@@ -175,56 +205,58 @@ section {
     </nav>
 </header>
 
-<!-- ===== CONTENIDO ===== -->
 <section>
     <h1>Bienvenido</h1>
-    <p>Tu sistema con chat integrado</p>
+    <p>Soluciones tecnológicas desde Nicaragua.</p>
 </section>
 
 <section>
     <h2>Servicios</h2>
-    <p>✔ Sistemas en Go</p>
-    <p>✔ Chatbots</p>
-    <p>✔ Desarrollo Web</p>
+    <p>✔ Desarrollo en Go & PostgreSQL</p>
+    <p>✔ Apps Móviles</p>
+    <p>✔ Implementación ERP</p>
 </section>
 
-<!-- ===== CHAT ===== -->
 <div id="chat-widget">
     <button id="chat-btn" onclick="toggleChat()">💬</button>
 
     <div id="chat-window">
         
         <div class="chat-header">
-            🤖 NICA CHAT
+            🔵 SOPORTE NICA CREATOR
         </div>
 
-        <div id="chat-body"></div>
+        <div id="chat-body">
+            <div class="msg bot">¡Hola! ¿En qué puedo ayudarte hoy?</div>
+        </div>
 
         <div class="chat-input">
-            <input type="text" id="user-input" placeholder="Escribe..." onkeypress="checkEnter(event)">
+            <input type="text" id="user-input" placeholder="Escribe tu mensaje..." onkeypress="checkEnter(event)">
             <button onclick="send()">➤</button>
         </div>
 
     </div>
 </div>
 
-<!-- ===== SCRIPT ===== -->
 <script>
-
 const API_URL = "https://agent-b-26n4.onrender.com/chat";
 
 function toggleChat() {
     const chat = document.getElementById("chat-window");
-    chat.style.display = chat.style.display === "flex" ? "none" : "flex";
+    if (chat.style.display === "flex") {
+        chat.style.display = "none";
+    } else {
+        chat.style.display = "flex";
+        // Auto-focus en móviles al abrir
+        setTimeout(() => document.getElementById("user-input").focus(), 300);
+    }
 }
 
 function addMessage(type, text) {
     const body = document.getElementById("chat-body");
-
     const div = document.createElement("div");
     div.className = "msg " + type;
     div.innerHTML = text;
-
     body.appendChild(div);
     body.scrollTop = body.scrollHeight;
 }
@@ -244,13 +276,11 @@ function send() {
         contentType: "application/json",
         dataType: "json",
         data: JSON.stringify({ message: text }),
-
         success: function(res) {
             addMessage("bot", res.reply);
         },
-
         error: function() {
-            addMessage("bot", "Error conectando con el servidor.");
+            addMessage("bot", "No pude conectarme. Revisa tu conexión.");
         }
     });
 }
@@ -258,7 +288,6 @@ function send() {
 function checkEnter(e) {
     if (e.key === "Enter") send();
 }
-
 </script>
 
 </body>
