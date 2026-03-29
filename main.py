@@ -5,46 +5,33 @@ import os
 # 🔑 API KEY
 os.environ["GOOGLE_API_KEY"] = os.getenv("GEMINI_API_KEY")
 
-# Gemini
 from langchain_google_genai import ChatGoogleGenerativeAI
-
-# Chroma
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
-
-# Datos
-from data import data
 
 app = FastAPI()
 
-# 🧠 Embeddings (ligero)
-embedding = HuggingFaceEmbeddings()
-
-# 📚 Base conocimiento
-db = Chroma(embedding_function=embedding)
-
-# 🔥 Cargar datos
-db.add_texts(data)
-
-# 🤖 Modelo IA
+# 🤖 IA
 llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
 
 # 📩 Entrada
 class Message(BaseModel):
     message: str
 
-# 🔍 Buscar en base
-def buscar_respuesta(pregunta):
-    try:
-        docs = db.similarity_search_with_score(pregunta, k=1)
+# 🧠 RESPUESTAS BASE (TU NEGOCIO)
+def responder_negocio(pregunta):
 
-        if docs:
-            doc, score = docs[0]
+    pregunta = pregunta.lower()
 
-            if score < 0.5:
-                return doc.page_content
-    except:
-        pass
+    if "erp" in pregunta or "odoo" in pregunta:
+        return "Ofrecemos implementación de ERP como Odoo para automatizar tu empresa."
+
+    if "pagina" in pregunta or "web" in pregunta:
+        return "Creamos páginas web modernas, rápidas y optimizadas para tu negocio."
+
+    if "chatbot" in pregunta:
+        return "Desarrollamos chatbots inteligentes como este para automatizar tu atención."
+
+    if "precio" in pregunta:
+        return "Ofrecemos soluciones personalizadas. ¿Qué tipo de sistema necesitas?"
 
     return None
 
@@ -57,8 +44,8 @@ async def chat(msg: Message):
 
     pregunta = msg.message
 
-    # 🔥 1. Buscar en tus datos
-    respuesta = buscar_respuesta(pregunta)
+    # 🔥 1. Respuesta rápida (sin IA)
+    respuesta = responder_negocio(pregunta)
 
     if respuesta:
         return {"reply": respuesta}
@@ -73,7 +60,7 @@ async def chat(msg: Message):
     - chatbots
     - automatización
 
-    Responde de forma clara, profesional y convincente.
+    Responde claro, corto y profesional.
 
     Cliente: {pregunta}
     """
