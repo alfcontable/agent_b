@@ -32,5 +32,5 @@ async def chat(msg: Message):
     try:
         response = llm.invoke(msg.message)
         return {"reply": response.content}
-    except:
-        return {"reply": "Error en IA"}
+    except Exception as e:
+         return {"reply": str(e)}
