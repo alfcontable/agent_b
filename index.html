@@ -213,11 +213,17 @@ function send() {
         contentType: "application/json",
         data: JSON.stringify({ message: text }),
         success: function(res) {
-            $("#" + loadingId).remove();
-            // Soporta varios formatos de respuesta (reply, message, o response)
-            const botReply = res.reply || res.message || res.response || "No recibí texto";
-            addMessage("bot", botReply);
-        },
+                $("#" + loadingId).remove();
+            
+                let botReply = res.reply || res.message || res.response || "No recibí texto";
+            
+                // 🔥 AQUÍ VA
+                if (typeof botReply === "object") {
+                    botReply = botReply.content || JSON.stringify(botReply);
+                }
+            
+                addMessage("bot", botReply);
+            },
         error: function(xhr, status, error) {
             $("#" + loadingId).remove();
             addMessage("bot", "Error de conexión. Verifica si Render está encendido.");
