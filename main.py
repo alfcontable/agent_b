@@ -2,54 +2,38 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import os
 
-# 🔑 CARGAR API KEY (ANTES DE TODO)
+# 🔑 API KEY
 os.environ["GOOGLE_API_KEY"] = os.getenv("GEMINI_API_KEY")
-
-# LangChain
-from langchain.memory import ConversationBufferMemory
-from langchain.chains import ConversationChain
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
 
 # Gemini
 from langchain_google_genai import ChatGoogleGenerativeAI
+
+# Chroma
+from langchain_community.vectorstores import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
 # Datos
 from data import data
 
 app = FastAPI()
 
-# 🧠 Embeddings (GRATIS LOCAL)
-embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+# 🧠 Embeddings (ligero)
+embedding = HuggingFaceEmbeddings()
 
-# 📚 Base de conocimiento
-db = Chroma(persist_directory="./db", embedding_function=embedding)
+# 📚 Base conocimiento
+db = Chroma(embedding_function=embedding)
 
-# 🔥 Cargar datos solo si está vacío
-try:
-    if len(db.get()["documents"]) == 0:
-        db.add_texts(data)
-        db.persist()
-except:
-    db.add_texts(data)
-    db.persist()
+# 🔥 Cargar datos
+db.add_texts(data)
 
-# 🧠 Memoria conversación
-memory = ConversationBufferMemory()
-
-# 🤖 IA (Gemini)
+# 🤖 Modelo IA
 llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
 
-conversation = ConversationChain(
-    llm=llm,
-    memory=memory
-)
-
-# 📩 Modelo entrada
+# 📩 Entrada
 class Message(BaseModel):
     message: str
 
-# 🔍 Buscar en conocimiento (más inteligente)
+# 🔍 Buscar en base
 def buscar_respuesta(pregunta):
     try:
         docs = db.similarity_search_with_score(pregunta, k=1)
@@ -57,7 +41,6 @@ def buscar_respuesta(pregunta):
         if docs:
             doc, score = docs[0]
 
-            # 🔥 Ajusta este valor si quieres más precisión
             if score < 0.5:
                 return doc.page_content
     except:
@@ -74,20 +57,15 @@ async def chat(msg: Message):
 
     pregunta = msg.message
 
-    # 🔥 1. Buscar en TU conocimiento
+    # 🔥 1. Buscar en tus datos
     respuesta = buscar_respuesta(pregunta)
 
     if respuesta:
         return {"reply": respuesta}
 
-    # 🔥 2. IA con personalidad de vendedor
+    # 🔥 2. IA vendedor
     prompt = f"""
     Eres un asesor tecnológico experto en ventas.
-
-    Tu objetivo es:
-    - entender al cliente
-    - ofrecer soluciones
-    - convencer sin ser agresivo
 
     Servicios:
     - ERP (Odoo)
@@ -95,14 +73,13 @@ async def chat(msg: Message):
     - chatbots
     - automatización
 
-    Responde corto, claro y profesional.
+    Responde de forma clara, profesional y convincente.
 
     Cliente: {pregunta}
     """
 
     try:
-        # 👉 usar memoria
-        response = conversation.predict(input=prompt)
-        return {"reply": response}
+        response = llm.invoke(prompt)
+        return {"reply": response.content}
     except:
-        return {"reply": "Hubo un error con la IA"}
+        return {"reply": "Error en IA"}
