@@ -18,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-llm = ChatGoogleGenerativeAI(model="gemini-1.0-pro")
+llm = ChatGoogleGenerativeAI(model="gemini-3-flash-preview")
 
 class Message(BaseModel):
     message: str
