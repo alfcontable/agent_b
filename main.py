@@ -2,6 +2,9 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import os
 
+# 🔑 CARGAR API KEY (ANTES DE TODO)
+os.environ["GOOGLE_API_KEY"] = os.getenv("GEMINI_API_KEY")
+
 # LangChain
 from langchain.memory import ConversationBufferMemory
 from langchain.chains import ConversationChain
@@ -16,36 +19,50 @@ from data import data
 
 app = FastAPI()
 
-# 🔑 API KEY
-os.environ["GOOGLE_API_KEY"] = os.getenv("GEMINI_API_KEY")
-
 # 🧠 Embeddings (GRATIS LOCAL)
 embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
 # 📚 Base de conocimiento
 db = Chroma(persist_directory="./db", embedding_function=embedding)
 
-# 👉 Cargar datos (solo primera vez)
-if not db.get()["documents"]:
+# 🔥 Cargar datos solo si está vacío
+try:
+    if len(db.get()["documents"]) == 0:
+        db.add_texts(data)
+        db.persist()
+except:
     db.add_texts(data)
+    db.persist()
 
 # 🧠 Memoria conversación
 memory = ConversationBufferMemory()
 
-# 🤖 IA (fallback)
+# 🤖 IA (Gemini)
 llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash")
 
-conversation = ConversationChain(llm=llm, memory=memory)
+conversation = ConversationChain(
+    llm=llm,
+    memory=memory
+)
 
 # 📩 Modelo entrada
 class Message(BaseModel):
     message: str
 
-# 🔍 Buscar en conocimiento
+# 🔍 Buscar en conocimiento (más inteligente)
 def buscar_respuesta(pregunta):
-    docs = db.similarity_search(pregunta, k=1)
-    if docs:
-        return docs[0].page_content
+    try:
+        docs = db.similarity_search_with_score(pregunta, k=1)
+
+        if docs:
+            doc, score = docs[0]
+
+            # 🔥 Ajusta este valor si quieres más precisión
+            if score < 0.5:
+                return doc.page_content
+    except:
+        pass
+
     return None
 
 @app.get("/")
@@ -63,22 +80,29 @@ async def chat(msg: Message):
     if respuesta:
         return {"reply": respuesta}
 
-    # 🔥 2. IA con personalidad (VENDEDOR)
+    # 🔥 2. IA con personalidad de vendedor
     prompt = f"""
-    Eres un asistente vendedor experto en tecnología.
-    Vendes servicios como:
-    - ERP (Odoo)
-    - Desarrollo web
-    - Chatbots
-    - Automatización
+    Eres un asesor tecnológico experto en ventas.
 
-    Responde de forma profesional y convincente.
+    Tu objetivo es:
+    - entender al cliente
+    - ofrecer soluciones
+    - convencer sin ser agresivo
+
+    Servicios:
+    - ERP (Odoo)
+    - desarrollo web
+    - chatbots
+    - automatización
+
+    Responde corto, claro y profesional.
 
     Cliente: {pregunta}
     """
 
     try:
-        response = llm.invoke(prompt)
-        return {"reply": response.content}
+        # 👉 usar memoria
+        response = conversation.predict(input=prompt)
+        return {"reply": response}
     except:
-        return {"reply": "Error en IA"}
+        return {"reply": "Hubo un error con la IA"}
