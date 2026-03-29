@@ -30,7 +30,7 @@ def home():
 @app.post("/chat")
 async def chat(msg: Message):
     try:
-        response = llm.invoke(msg.message)
+        response = llm.invoke(prompt)
         return {"reply": response.content}
     except Exception as e:
          return {"reply": str(e)}
